@@ -192,8 +192,8 @@ cp -f payloads/*.sh "$VOLUME"
 echo "Adding Hax dylibs..."
 cp -f payloads/ASentientBot-Hax/BarryKN-fork/Hax*.dylib "$VOLUME"
 
-echo 'Adding kexts and other binaries...'
-cp -rf payloads/kexts payloads/bin "$VOLUME"
+echo 'Adding kexts, frameworks, plist, and other binaries...'
+cp -rf payloads/kexts payloads/PrivateFrameworks payloads/Preferences payloads/bin "$VOLUME"
 
 # Let's play it safe and ensure the shell scripts, dylibs, etc. are executable.
 chmod -R u+x "$VOLUME"/*.sh "$VOLUME"/Hax*.dylib "$VOLUME"/bin
