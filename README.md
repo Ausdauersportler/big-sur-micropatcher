@@ -1,4 +1,4 @@
-# big-sur-micropatcher (Version 0.5.4) iMac 2009-2011 edition
+# big-sur-micropatcher (Version dev-v0.5.5) iMac 2009-2011 edition
 
 A primitive USB patcher for installing macOS Big Sur on unsupported Macs
 
