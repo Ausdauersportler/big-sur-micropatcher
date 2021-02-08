@@ -917,7 +917,7 @@ then
         if [ "x$RESULT" = "xfalse" ]
         then
             WIFIPATCH="YES"
-        if
+        fi
         
         if [ "x$WIFIPATCH" = "xYES" ]
         then
