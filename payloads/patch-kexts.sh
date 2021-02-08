@@ -913,8 +913,13 @@ then
 
         # check if there exist a ContinuitySupport entry for this particular system
         RESULT=`/usr/libexec/PlistBuddy -c "Print:$MYBOARD:ContinuitySupport" "IOBluetooth.framework/Versions/A/Resources/SystemParameters.plist"`
-
+        
         if [ "x$RESULT" = "xfalse" ]
+        then
+            WIFIPATCH="YES"
+        if
+        
+        if [ "x$WIFIPATCH" = "xYES" ]
         then
             echo 'patching IOBluetooth.framework for Continuity and HandOff for board-id ' $MYBOARD
             
@@ -933,7 +938,7 @@ then
         
         pushd "$VOLUME/System/Library/Extensions" > /dev/null
  
-        if [ "x$RESULT" = "xfalse" ]
+        if [ "x$WIFIPATCH" = "xYES" ]
         then
             pushd "$VOLUME/System/Library/Extensions" > /dev/null
 
