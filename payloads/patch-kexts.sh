@@ -203,6 +203,10 @@ then
     then
         echo "No 802.11ac WiFi card detected, so installing mojave-hybrid WiFi patch."
         INSTALL_WIFI=mojave-hybrid
+        #
+        # add here WiFi / BT discovery for non ac cards like the BCM94331CD
+        # system_profiler SPAirPortDataType | grep 'Card Type' gives "Card Type: AirPort Extreme  (0x14E4, 0x14A)" for BCM943602CDP
+        #
     else
         echo "Found 802.11ac WiFi card, so not installing a WiFi patch."
         INSTALL_WIFI=NO
@@ -917,6 +921,13 @@ then
         if [ "x$RESULT" = "xfalse" ]
         then
             WIFIPATCH="YES"
+            if [ -d IOBluetooth.framework.original ]
+            then
+                echo 'IOBluetooth.framework already modified, pleass unpatch using patch-kext.sh -u before patching again'
+            else
+                echo 'saving IOBluetooth.framework'
+                cp -R IOBluetooth.framework IOBluetooth.framework.original
+            fi
         fi
         
         if [ "x$WIFIPATCH" = "xYES" ]
@@ -944,7 +955,7 @@ then
 
             echo 'patching IO80211Family.kext for Continuity and HandOff for board-id ' $MYBOARD
             #
-            # this is currently not reversed by patch-kext.sh -u
+            # this is currently not explicitely reversed by patch-kext.sh -u, but it is the patched IO80211Family.kext - and so reversed
             #
 
             /usr/bin/perl -pi -e "s/\Mac-00BE6ED71E35EB86/$MYBOARD/" IO80211Family.kext/Contents/PlugIns/AirPortBrcm4360.kext/Contents/MacOS/AirPortBrcm4360
@@ -1188,7 +1199,8 @@ else
 
     popd > /dev/null
 
-    # CoreBrightness.framework and possibly AppleGVA.framework
+    # CoreBrightness.framework and possibly AppleGVA.framework and IOBluetooth.framework'
+
     pushd "$VOLUME/System/Library/PrivateFrameworks" > /dev/null
     restoreOriginals
     popd > /dev/null

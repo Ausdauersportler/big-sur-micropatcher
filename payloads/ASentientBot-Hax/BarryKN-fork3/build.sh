@@ -14,8 +14,8 @@ then
     exit 0
 fi
 
-/usr/bin/clang $FLAGS -DDO_NOT_SEAL HaxLib4.m -o HaxDoNotSeal.dylib
-/usr/bin/clang $FLAGS -DSEAL HaxLib4.m -o HaxSeal.dylib
-/usr/bin/clang $FLAGS -DBYPASS_APFS_ROM_CHECK -DDO_NOT_SEAL HaxLib4.m -o HaxDoNotSealNoAPFSROMCheck.dylib
-/usr/bin/clang $FLAGS -DBYPASS_APFS_ROM_CHECK -DSEAL HaxLib4.m -o HaxSealNoAPFSROMCheck.dylib
+clang $FLAGS -DDO_NOT_SEAL HaxLib.m -o HaxDoNotSeal.dylib
+clang $FLAGS -DSEAL HaxLib.m -o HaxSeal.dylib
+clang $FLAGS -DBYPASS_APFS_ROM_CHECK -DDO_NOT_SEAL HaxLib.m -o HaxDoNotSealNoAPFSROMCheck.dylib
+clang $FLAGS -DBYPASS_APFS_ROM_CHECK -DSEAL HaxLib.m -o HaxSealNoAPFSROMCheck.dylib
 codesign -f -s - Hax*.dylib
