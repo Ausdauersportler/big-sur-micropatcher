@@ -923,7 +923,7 @@ then
             WIFIPATCH="YES"
             if [ -d IOBluetooth.framework.original ]
             then
-                echo 'IOBluetooth.framework already modified, pleass unpatch using patch-kext.sh -u before patching again'
+                echo 'IOBluetooth.framework already modified, please unpatch using patch-kext.sh -u before patching again'
             else
                 echo 'saving IOBluetooth.framework'
                 cp -R IOBluetooth.framework IOBluetooth.framework.original
@@ -1055,9 +1055,9 @@ then
         popd > /dev/null
     fi
 
-    if [ "x$INSTALL_APPLEGVA" = "xYES" ]
+    if [ "x$INSTALL_APPLEGVA_OLD" = "xYES" ]
     then
-        echo 'Installing patched AppleGVA.framework for iGPU support in Sandy Bridge Systems'
+        echo 'Installing patched AppleGVA.framework for iGPU support on Sandy Bridge Systems'
         pushd "$VOLUME/System/Library/PrivateFrameworks" > /dev/null
         
         if [ -d AppleGVA.framework.original ]
@@ -1074,6 +1074,43 @@ then
         popd > /dev/null
     fi
 
+    if [ "x$INSTALL_APPLEGVA" = "xYES" ]
+    then
+        echo 'Patching AppleGVA.framework for iGPU support'
+        pushd "$VOLUME/System/Library/PrivateFrameworks" > /dev/null
+        
+        if [ -d AppleGVA.framework.original ]
+        then
+            echo 'AppleGVA.framework already modified, please unpatch using patch-kext.sh -u before patching again'
+        else
+            echo 'saving AppleGVA.framework'
+            cp -R AppleGVA.framework AppleGVA.framework.original
+        fi
+
+        # getting board-id of the system
+        MYBOARD=`/usr/sbin/ioreg -l | grep board-id | awk -F\" '{ print $4 }' | grep Mac`
+        
+        echo "Patching 'AppleGVA.framework' to H.264 Hardware acceleration..."
+
+        /usr/libexec/PlistBuddy -c "Add :System\ Support:$MYBOARD:allowFrameReordering bool false" "$MOUNT/System/Library/PrivateFrameworks/AppleGVA.framework/Versions/A/Resources/Info.plist"
+        /usr/libexec/PlistBuddy -c "Add :System\ Support:$MYBOARD:hwe bool true" "$MOUNT/System/Library/PrivateFrameworks/AppleGVA.framework/Versions/A/Resources/Info.plist"
+        /usr/libexec/PlistBuddy -c "Add :System\ Support:$MYBOARD:hwe420 bool true" "$MOUNT/System/Library/PrivateFrameworks/AppleGVA.framework/Versions/A/Resources/Info.plist"
+        /usr/libexec/PlistBuddy -c "Add :System\ Support:$MYBOARD:interlacedOff bool true" "$MOUNT/System/Library/PrivateFrameworks/AppleGVA.framework/Versions/A/Resources/Info.plist"
+        /usr/libexec/PlistBuddy -c "Add :System\ Support:$MYBOARD:ke1 bool true" "$MOUNT/System/Library/PrivateFrameworks/AppleGVA.framework/Versions/A/Resources/Info.plist"
+        /usr/libexec/PlistBuddy -c "Add :System\ Support:$MYBOARD:pp integer 1" "$MOUNT/System/Library/PrivateFrameworks/AppleGVA.framework/Versions/A/Resources/Info.plist"
+        
+        echo "Creating 'com.apple.AppleGVA' to H.264 Hardware acceleration..."
+        
+        defaults write com.apple.AppleGVA gvaForceAMDKE -bool YES
+        defaults write com.apple.AppleGVA gvaForceAMDAVCEncode -bool YES
+        defaults write com.apple.AppleGVA gvaForceAMDAVCDecode -bool YES
+        defaults write com.apple.AppleGVA gvaForceAMDHEVCDecode -bool YES
+        
+        fixPerms AppleGVA.framework
+                
+        popd > /dev/null
+    fi
+    
     if [ "x$DEACTIVATE_TELEMETRY" = "xYES" ]
     then
         echo 'Deactivating com.apple.telemetry.plugin'
