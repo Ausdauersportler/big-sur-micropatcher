@@ -679,7 +679,7 @@
 				<key>SystemAudioVolume</key>
 				<data>JQ==</data>
 				<key>boot-args</key>
-				<string>-v keepsyms=1 -no_compat_check debug=0x100</string>
+				<string>-v debug=0x100 keepsyms=1 -no_compat_check</string>
 				<key>run-efi-updater</key>
 				<string>No</string>
 				<key>csr-active-config</key>

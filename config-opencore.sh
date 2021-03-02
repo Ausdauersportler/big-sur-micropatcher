@@ -200,15 +200,15 @@ then
     MACMODEL=`sysctl -n hw.model`
     echo "Detected Mac model is:" $MACMODEL
     case $MACMODEL in
-    "iMac11,1" | "iMac11,2" | "iMac11,3")
+        "iMac11,1" | "iMac11,2" | "iMac11,3")
         echo "Late 2009 or Mid 2010 iMac detected, so enabling iMac11,x extensions."
         IMAC11="YES"
         ;;
-    "iMac12,1")
+        "iMac12,1")
         echo "Mid 2011 iMac 21.5 inch detected, so enabling iMac12,1 extensions."
         IMAC121="YES"
         ;;
-    "iMac12,2")
+        "iMac12,2")
         echo "Mid 2011 iMac 27 inch detected, so enabling iMac12,2 extensions."
         IMAC122="YES"
         ;;
@@ -220,6 +220,10 @@ then
 
 fi
 
+
+#
+# basically selection is based on GPU type, not system type
+#
 if [ -z "$GPU" ]
 then
     DID=`/usr/sbin/chroot "$ROOT" /usr/sbin/system_profiler SPDisplaysDataType | fgrep "Device ID" | awk '{print $3}'`
