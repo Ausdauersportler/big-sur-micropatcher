@@ -146,10 +146,10 @@ do
         echo "Experimental: selected model iMac11,x"
         MODEL="iMac11,1"
         ;;
-    --nikey22)
-        echo "Deprecated: run without OC on iMac12,x"
-        INSTALL_NIKEY22="YES"
-        ;;
+#    --nikey22)
+#        echo "Deprecated: run without OC on iMac12,x"
+#        INSTALL_NIKEY22="YES"
+#        ;;
     --force)
         FORCE=YES
         ;;
@@ -326,8 +326,8 @@ case $PATCHMODE in
     INSTALL_GFTESLA="YES"
     INSTALL_NVENET="YES"
     INSTALL_BCM5701="YES"
-    INSTALL_NIGHTSHIFT="YES"
-    DISABLE_LIBRARY_VALIDATION="YES"
+#    INSTALL_NIGHTSHIFT="YES"
+#    DISABLE_LIBRARY_VALIDATION="YES"
     DEACTIVATE_TELEMETRY="YES"
     ;;
 --2010)
@@ -337,8 +337,8 @@ case $PATCHMODE in
     INSTALL_GFTESLA="YES"
     INSTALL_NVENET="YES"
     INSTALL_BCM5701="YES"
-    INSTALL_NIGHTSHIFT="YES"
-    DISABLE_LIBRARY_VALIDATION="YES"
+#    INSTALL_NIGHTSHIFT="YES"
+#    DISABLE_LIBRARY_VALIDATION="YES"
     DEACTIVATE_TELEMETRY="YES"
     ;;
 --2011)
@@ -346,8 +346,8 @@ case $PATCHMODE in
     INSTALL_HD3000="YES"
     INSTALL_LEGACY_USB="YES"
     INSTALL_BCM5701="YES"
-    INSTALL_NIGHTSHIFT="YES"
-    DISABLE_LIBRARY_VALIDATION="YES"
+#    INSTALL_NIGHTSHIFT="YES"
+#    DISABLE_LIBRARY_VALIDATION="YES"
     ;;
 --2012)
     if [ "x$INSTALL_WIFI" = "xNO" && "x$FORCE_PATCH_2012" != "xYES" ]

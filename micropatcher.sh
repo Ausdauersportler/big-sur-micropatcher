@@ -1,6 +1,9 @@
 #!/bin/bash
-VERSIONNUM=dev-v0.5.4
+VERSIONNUM=dev-v0.5.5
 VERSION="BarryKN/Ausdauersportler Big Sur Micropatcher v$VERSIONNUM"
+
+# OPENCORE Version
+OPENCORE=YES
 
 ### begin function definitions ###
 
@@ -157,40 +160,51 @@ then
 fi
 
 
-# Patch com.apple.Boot.plist
-echo 'Patching com.apple.Boot.plist...'
-# It would seem more obvious to do mv then cp, but doing cp then cat lets us
-# use cat as a permissions-preserving Unix trick, just to be extra cautious.
-if [ ! -e "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist.original" ]
+if [ "x$OPENCORE" = "xYES" ]
 then
-    cp "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist" "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist.original" || handleCopyPermissionsFailure
-fi
-cat payloads/com.apple.Boot.plist > "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist"
+    echo 'Preparing OpenCore version of micropatcher'
+    echo 'Please use install-opencore.sh to prepare the EFI partition of your USB installer!'
+else
+    echo 'Preparing HAX lib version of micropatcher'
+    echo 'Please use install-setvars.sh to prepare the EFI partition of your USB installer!'
+    # Patch com.apple.Boot.plist
+    echo 'Patching com.apple.Boot.plist...'
+    # It would seem more obvious to do mv then cp, but doing cp then cat lets us
+    # use cat as a permissions-preserving Unix trick, just to be extra cautious.
+    if [ ! -e "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist.original" ]
+    then
+        cp "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist" "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist.original" || handleCopyPermissionsFailure
+    fi
+    cat payloads/com.apple.Boot.plist > "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist"
 
-# Add the trampoline.
-echo 'Installing trampoline...'
-TEMPAPP="$VOLUME/tmp.app"
-mv -f "$APPPATH" "$TEMPAPP"
-cp -r payloads/trampoline.app "$APPPATH"
-mv -f "$TEMPAPP" "$APPPATH/Contents/MacOS/InstallAssistant.app"
-cp "$APPPATH/Contents/MacOS/InstallAssistant" "$APPPATH/Contents/MacOS/InstallAssistant_plain"
-cp "$APPPATH/Contents/MacOS/InstallAssistant" "$APPPATH/Contents/MacOS/InstallAssistant_springboard"
-pushd "$APPPATH/Contents" > /dev/null
-for item in `cd MacOS/InstallAssistant.app/Contents;ls -1 | fgrep -v MacOS`
-do
-    ln -s MacOS/InstallAssistant.app/Contents/$item .
-done
-popd > /dev/null
-touch "$APPPATH"
+    # Add the trampoline.
+    echo 'Installing trampoline...'
+    TEMPAPP="$VOLUME/tmp.app"
+    mv -f "$APPPATH" "$TEMPAPP"
+    cp -r payloads/trampoline.app "$APPPATH"
+    mv -f "$TEMPAPP" "$APPPATH/Contents/MacOS/InstallAssistant.app"
+    cp "$APPPATH/Contents/MacOS/InstallAssistant" "$APPPATH/Contents/MacOS/InstallAssistant_plain"
+    cp "$APPPATH/Contents/MacOS/InstallAssistant" "$APPPATH/Contents/MacOS/InstallAssistant_springboard"
+    pushd "$APPPATH/Contents" > /dev/null
+    for item in `cd MacOS/InstallAssistant.app/Contents;ls -1 | fgrep -v MacOS`
+    do
+        ln -s MacOS/InstallAssistant.app/Contents/$item .
+    done
+    popd > /dev/null
+    touch "$APPPATH"
+fi
 
 # Copy the shell scripts into place so that they may be used once the
 # USB stick is booted.
 echo 'Copying shell scripts...'
 cp -f payloads/*.sh "$VOLUME"
 
-# Copy Hax dylibs into place
-echo "Adding Hax dylibs..."
-cp -f payloads/ASentientBot-Hax/BarryKN-fork/Hax*.dylib "$VOLUME"
+if [ "x$OPENCORE" != "xYES" ]
+    then
+    # Copy Hax dylibs into place
+    echo "Adding Hax dylibs..."
+    cp -f payloads/ASentientBot-Hax/BarryKN-fork/Hax*.dylib "$VOLUME"
+fi
 
 echo 'Adding kexts, frameworks, plist, and other binaries...'
 cp -rf payloads/kexts payloads/PrivateFrameworks payloads/Preferences payloads/bin "$VOLUME"
@@ -199,8 +213,11 @@ echo 'Adding opencore and scripts...'
 cp -rf opencore install-opencore.sh config-opencore.sh "$VOLUME"
 
 # Let's play it safe and ensure the shell scripts, dylibs, etc. are executable.
-chmod -R u+x "$VOLUME"/*.sh "$VOLUME"/Hax*.dylib "$VOLUME"/bin
-
+chmod -R u+x "$VOLUME"/*.sh "$VOLUME"/bin
+if [ "x$OPENCORE" != "xYES" ]
+then
+    chmod -R u+x "$VOLUME"/Hax*.dylib
+fi
 # Save a file onto the USB stick that says what patcher & version was used,
 # so it can be identified later (e.g. for troubleshooting purposes).
 echo 'Saving patcher version info...'

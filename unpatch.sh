@@ -3,6 +3,9 @@ echo 'Unpatcher starting. If this fails, try recreating the installer USB using'
 echo 'createinstallmedia.'
 echo
 
+# OPENCORE Version
+OPENCORE=YES
+
 # Check for --no-sync option
 if [ "x$1" = "x--no-sync" ]
 then
@@ -59,40 +62,43 @@ then
     echo
 fi
 
-# Undo the boot-time compatibility check patch, if present
-echo 'Checking for boot-time compatibility check patch (v0.0.1/v0.0.2).'
-if [ -e "$VOLUME/System/Library/CoreServices/PlatformSupport.plist.inactive" ]
+if [ "x$OPENCORE" != "xYES" ]
 then
-    echo 'Removing boot-time compatibility check patch.'
-    mv "$VOLUME/System/Library/CoreServices/PlatformSupport.plist.inactive" \
+    # Undo the boot-time compatibility check patch, if present
+    echo 'Checking for boot-time compatibility check patch (v0.0.1/v0.0.2).'
+    if [ -e "$VOLUME/System/Library/CoreServices/PlatformSupport.plist.inactive" ]
+    then
+        echo 'Removing boot-time compatibility check patch.'
+        mv "$VOLUME/System/Library/CoreServices/PlatformSupport.plist.inactive" \
        "$VOLUME/System/Library/CoreServices/PlatformSupport.plist"
-else
-    echo 'Boot-time compatibility check patch not present; continuing.'
-fi
+    else
+        echo 'Boot-time compatibility check patch not present; continuing.'
+    fi
 
-echo
+    echo
 
-# Undo the com.apple.Boot.plist patch, if present
-echo 'Checking for com.apple.Boot.plist patch (v0.0.3+).'
-if [ -e "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist.original" ]
-then
-    echo 'Removing com.apple.Boot.plist patch.'
-    cat "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist.original" > "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist"
-    rm "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist.original"
-else
-    echo 'com.apple.Boot.plist patch not present; continuing.'
-fi
+    # Undo the com.apple.Boot.plist patch, if present
+    echo 'Checking for com.apple.Boot.plist patch (v0.0.3+).'
+    if [ -e "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist.original" ]
+    then
+        echo 'Removing com.apple.Boot.plist patch.'
+        cat "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist.original" > "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist"
+        rm "$VOLUME/Library/Preferences/SystemConfiguration/com.apple.Boot.plist.original"
+    else
+        echo 'com.apple.Boot.plist patch not present; continuing.'
+    fi
 
-echo
-if [ -d "$APPPATH/Contents/MacOS/InstallAssistant.app" ]
-then
-    echo 'Removing trampoline.'
-    TEMPAPP="$VOLUME/tmp.app"
-    mv -f "$APPPATH/Contents/MacOS/InstallAssistant.app" "$TEMPAPP"
-    rm -rf "$APPPATH"
-    mv -f "$TEMPAPP" "$APPPATH"
-else
-    echo 'Looked for trampoline (v0.2.0+) but trampoline is not present. Continuing...'
+    echo
+    if [ -d "$APPPATH/Contents/MacOS/InstallAssistant.app" ]
+    then
+        echo 'Removing trampoline.'
+        TEMPAPP="$VOLUME/tmp.app"
+        mv -f "$APPPATH/Contents/MacOS/InstallAssistant.app" "$TEMPAPP"
+        rm -rf "$APPPATH"
+        mv -f "$TEMPAPP" "$APPPATH"
+    else
+        echo 'Looked for trampoline (v0.2.0+) but trampoline is not present. Continuing...'
+    fi
 fi
 
 echo 'Removing kexts, shell scripts, patcher version info, etc.'
@@ -116,9 +122,12 @@ rm -rf "$VOLUME"/opencore
 # For all versions
 rm -f "$VOLUME"/*.sh "$VOLUME/Patch-Version.txt"
 
-echo 'Remvoing Hax dylibs...'
-rm -f "$VOLUME"/Hax*.dylib
-rm -rf "$VOLUME"/Hax*.app
+if [ "x$OPENCORE" != "xYES" ]
+then
+    echo 'Remvoing Hax dylibs...'
+    rm -f "$VOLUME"/Hax*.dylib
+    rm -rf "$VOLUME"/Hax*.app
+fi
 
 if [ "x$SKIP_SYNC" != "xYES" ]
 then

@@ -575,7 +575,7 @@
 			<key>ShowPicker</key>
 			<true/>
 			<key>TakeoffDelay</key>
-			<integer>0</integer>
+			<integer>2500</integer>
 			<key>Timeout</key>
 			<integer>5</integer>
 		</dict>

@@ -201,7 +201,7 @@ then
     echo "Detected Mac model is:" $MACMODEL
     case $MACMODEL in
     "iMac11,1" | "iMac11,2" | "iMac11,3")
-        echo "Late 2009 or Mid 2010 iMac detected, so enabling @khronokernel and iMac11,x extensions."
+        echo "Late 2009 or Mid 2010 iMac detected, so enabling iMac11,x extensions."
         IMAC11="YES"
         ;;
     "iMac12,1")
@@ -213,7 +213,7 @@ then
         IMAC122="YES"
         ;;
     *)
-        echo "This Mac is no iMac11,x or 12,x - install config.plist containing @khronokernel patch"
+        echo "This Mac is no iMac11,x or 12,x - install generic config.plist"
         OTHERMAC="YES"
         ;;
     esac
@@ -227,35 +227,38 @@ then
     case $DID in
         # OpenCore: K610M, K1100M, K2100M
         0x12b9 | 0x0ff6 | 0x11fc)
-        echo "NVIDIA K610M, K1100M, K2100M found, assume use of OC, device ID: " $DID
+        echo "NVIDIA K610M, K1100M, K2100M found, device ID: " $DID
         GPU="NV"
         ;;
         # NVIDIA (can run witout OpenCore)
         0x1198 | 0x1199 | 0x119a | 0x119f | 0x119e |0x119d |0x11e0 | 0x11e1 | 0x11b8 | 0x11b7 | 0x11b6 | 0x11bc | 0x11bd | 0x11be |0x0ffb | 0x0ffc)
-        echo "NVIDIA Kepler Kx100M, Kx000M, GTX8xx, GTX7xx Card found, assume no use of OC, device ID: " $DID
+        echo "NVIDIA Kepler Kx100M, Kx000M, GTX8xx, GTX7xx Card found, device ID: " $DID
         GPU="NV"
         ;;
         # OpenCore; AMD Baffin cards
         0x67e8 | 0x67e0 | 0x67c0 | 0x67df | 0x67ef)
-        echo "AMD Polaris WX4130/WX4150/WX4170/WX7100/RX480 found, assume use of OC, device ID: " $DID
+        echo "AMD Polaris WX4130/WX4150/WX4170/WX7100/RX480 found, device ID: " $DID
         GPU="AMD"
         ;;
         0x6720 | 0x6740 | 0x6741)
         echo "Original AMD HD 67x0 card found, NO graphics acceleration, device ID: " $DID
-        GPU="ATI"
+        echo "Stopping installation of OpenCore. It does not make any sense to use this system with Big Sur"
+        exit
         ;;
         0x68c1 | 0x68d8)
         echo "Original AMD HD 5xx0 card found, NO graphics acceleration, device ID: " $DID
-        GPU="ATI"
+        echo "Stopping installation of OpenCore. It does not make any sense to use this system with Big Sur"
+        exit
+
         ;;
         0x9488 | 0x944a | 0x944b)
         echo "Original AMD HD 4xx0 card found, NO graphics acceleration, device ID: " $DID
-        GPU="ATI"
+        echo "Stopping installation of OpenCore. It does not make any sense to use this system with Big Sur"
+        exit
         ;;
         *)
-        echo "Unknown GPU model. This may be a config-opencore bug, or the original Apple iMac ATI GPU has been detected"
-        echo "which is not really usable with Big Sur and will run without any graphics acceleration, device ID: " $DID
-        GPU="ATI"
+        echo "Unknown GPU model. This may be a config-opencore bug, device ID: " $DID
+        GPU="OTHER"
         ;;
     esac
     echo
