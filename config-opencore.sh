@@ -213,7 +213,7 @@ then
         IMAC122="YES"
         ;;
     *)
-        echo "This Mac is no iMac11,x or 12,x - install generic config.plist"
+        echo "This Mac is no iMac11,x or 12,x, found this system: " $MACMODEL
         OTHERMAC="YES"
         ;;
     esac

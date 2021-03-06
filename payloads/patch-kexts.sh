@@ -813,7 +813,7 @@ then
             echo "Big Sur and will most likely run without any graphics acceleration"
             ;;
             *)
-            echo "Unknown GPU model. This may be a patcher bug, device ID: " $DID
+            echo "Unknown GPU type. This may be a patcher bug, device ID: " $DID
             echo "Big Sur and will likely run without any graphics acceleration"
             ;;
         esac

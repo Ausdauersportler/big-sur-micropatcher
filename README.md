@@ -22,7 +22,8 @@ Possibly I may add an automatic detection denying patching of already patched sy
 
 ## Important news before you install Big Sur!
 
-Right now even with version 11.2 (20D64) Bluetooth seesm to be not completly stable. I am loosing contact to my Apple 2 BT mouse on a regular basis, but at least I am able to reconnect in most cases witout a reboot.
+Right now even with version 11.2 (20D64) Bluetooth seems to be not completly stable. I am loosing contact to my Apple 2 BT mouse on a regular basis, but at least I am able to reconnect in most cases witout a reboot.
+
 
 </br>
 </br>
@@ -43,6 +44,25 @@ This documentation is more thorough than for previous versions of this patcher, 
 I repeat, do a Time Machine backup *before* upgrading!! Big Sur changes how Time Machine backups are done, and I have heard that it is not possible to use previous versions of macOS to recover data from Big Sur's Time Machine backups. (I have created Time Machine backups with Big Sur, and I have restored them using Big Sur, but I have not yet tried to access Big Sur Time Machine backups using previous macOS releases.)
 
 Keep in mind, Mojave and Catalina will probably receive security updates until roughly September 2021 and September 2022 respectively (give or take a month), so you can continue using Mojave or Catalina for now. If you are currently running High Sierra, it probably makes more sense to upgrade to Mojave (or maybe Catalina) for now, rather than Big Sur. This patcher definitely needs more time to mature, and considering that Big Sur is the first x.0 release of macOS in roughly 20 years, it would also be a good idea to give Apple more time to fix Big Sur bugs.
+
+## Important news before you update Big Sur using the Apple software update (OTA upgrades) !
+
+You will be offered full installers published by Apple automatically in the software update  pane within the system prefernces app. You can now safely select this update. After the update all patches will be deleted from the system and you need to patch the system again as described in step 15 below. 
+
+You can do this from a terminal within Big Sur. But you need the installer USB inserted and you need to provide depending on your iMac model a different command line flag:
+
+`/Volumes/Install\ macOS\ Big\ Sur/patch-kexts.sh --model=iMac12` for iMac12,x 2011 systems and
+
+`/Volumes/Install\ macOS\ Big\ Sur/patch-kexts.sh --model=iMac11` for iMac11,x 2009 and 2010 systems.
+
+All other Macs need simply to use here the patchmode flag, i.e.:
+
+`/Volumes/Install\ macOS\ Big\ Sur/patch-kexts.sh --2010` for  2010 systems.
+
+This way the patcher will be forced to do the patching regardless which board-id and which OpenCore spoofing method has been selected.
+
+Reason: 
+The current method of @jackluke spoofing a new board-id with OpenCore makes your iMac (and every other Mac, too) look alike an real iMacPro1,1. The patcher itself decides by default to do no patching to real supported systems, which is a small catch22 situation. 
 
 ## Compatibility between different releases of this patcher and different Big Sur beta releases
 - dev-v0.5.5: Tested with 11.2.1 (20D75) and 11.3 Beta 2 directly and on the OTA way starting from Catalina, High Sierra and Mojave! You can boot OpenCore on the USB installer with your High Sierra/Mojave/Catalina installation and do a direct upgrade using the software update system preferences without using the downloaded installer at all!
