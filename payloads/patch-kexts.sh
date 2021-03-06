@@ -326,6 +326,7 @@ case $PATCHMODE in
     INSTALL_GFTESLA="YES"
     INSTALL_NVENET="YES"
     INSTALL_BCM5701="YES"
+    INSTALL_Radeon3000X="YES"
 #    INSTALL_NIGHTSHIFT="YES"
 #    DISABLE_LIBRARY_VALIDATION="YES"
     DEACTIVATE_TELEMETRY="YES"
@@ -664,6 +665,15 @@ then
         
 #        fixPerms AppleIntelHD3000GraphicsVADriver.bundle
 #        fixPerms AppleIntelSNBVA.bundle
+    fi
+    
+    if [ "x$INSTALL_Radeon3000X" = "xYES" ]
+    then
+        echo 'Installing High Sierra AMDRadeonX3000 kexts'
+        rm -rf AMDRadeonX3000*
+        unzip -q "$IMGVOL/kexts/AMDRadeonX3000.kext.zip"
+        
+        fixPerms AMDRadeonX3000*
     fi
 
     if [ "x$INSTALL_LEGACY_USB" = "xYES" ]
