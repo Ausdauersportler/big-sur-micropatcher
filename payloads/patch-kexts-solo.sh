@@ -66,7 +66,8 @@ else
     else
         # if this is inaccurate, there's an error check in the next top-level
         # if-then block which will catch it and do the right thing
-        IMGVOL="/Volumes/Install macOS Beta"
+        # assume we have a separated payloads and patch-kext.sh from the USB
+        IMGVOL=$PWD
     fi
 fi
 
@@ -77,7 +78,6 @@ then
     echo "installer USB."
     exit 1
 fi
-
 
 # Check for command line options.
 while [[ $1 = -* ]]
@@ -284,6 +284,11 @@ then
         INSTALL_IMACMETAL="YES"
         INSTALL_MCCS="YES"
         INSTALL_APPLEGVA="NO"
+        ;;
+    iMacOC)
+        echo "Selected iMacOC on commandline. Using BCM5701 and AppleHDA, only." $MODEL
+        INSTALL_BCM5701="YES"
+        INSTALL_HDA="YES"
         ;;
     Macmini6,?|MacBookAir5,?|MacBookPro9,?|MacBookPro10,?|iMac13,?)
         echo "Detected a 2012-2013 Mac. Using --2012 patch mode." $MODEL

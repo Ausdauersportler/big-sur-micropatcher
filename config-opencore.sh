@@ -193,23 +193,23 @@ then
 fi
 
 # Before proceeding with the actual installation, see if we were provided
-# a command line option for SIP/ARV, and if not, make a decision based
+# a command line option for GPU Type, and if set, make a decision based
 # on what Mac model this is.
-if [ -z "$GPU" ]
+if [[ "x$GPU" = "xNV"  ||  "x$GPU" = "xAMD" ]]
 then
     MACMODEL=`sysctl -n hw.model`
     echo "Detected Mac model is:" $MACMODEL
     case $MACMODEL in
         "iMac11,1" | "iMac11,2" | "iMac11,3")
-        echo "Late 2009 or Mid 2010 iMac detected, so enabling iMac11,x extensions."
+        echo "Late 2009 or Mid 2010 iMac detected"
         IMAC11="YES"
         ;;
         "iMac12,1")
-        echo "Mid 2011 iMac 21.5 inch detected, so enabling iMac12,1 extensions."
+        echo "Mid 2011 iMac 21.5 inch detected"
         IMAC121="YES"
         ;;
         "iMac12,2")
-        echo "Mid 2011 iMac 27 inch detected, so enabling iMac12,2 extensions."
+        echo "Mid 2011 iMac 27 inch detected"
         IMAC122="YES"
         ;;
     *)
@@ -217,9 +217,7 @@ then
         OTHERMAC="YES"
         ;;
     esac
-
 fi
-
 
 #
 # basically selection is based on GPU type, not system type
@@ -247,18 +245,18 @@ then
         0x6720 | 0x6740 | 0x6741)
         echo "Original AMD HD 67x0 card found, NO graphics acceleration, device ID: " $DID
         echo "Stopping installation of OpenCore. It does not make any sense to use this system with Big Sur"
-        exit
+        exit 1
         ;;
         0x68c1 | 0x68d8)
         echo "Original AMD HD 5xx0 card found, NO graphics acceleration, device ID: " $DID
         echo "Stopping installation of OpenCore. It does not make any sense to use this system with Big Sur"
-        exit
+        exit 1
 
         ;;
         0x9488 | 0x944a | 0x944b)
         echo "Original AMD HD 4xx0 card found, NO graphics acceleration, device ID: " $DID
         echo "Stopping installation of OpenCore. It does not make any sense to use this system with Big Sur"
-        exit
+        exit 1
         ;;
         *)
         echo "Unknown GPU model. This may be a config-opencore bug, device ID: " $DID
@@ -267,7 +265,6 @@ then
     esac
     echo
 fi
-
 
 # Now do the actual installation
 echo "removing old opencore EFI utility."
@@ -302,7 +299,7 @@ then
         cp -f opencore/CONFIG/config_AMD_BigSur.plist /Volumes/EFI/EFI/OC/config.plist
     fi
 else
-    echo 'Verbose boot disabled, no iMac specific metal GPU selected'
+    echo 'Verbose boot disabled, no iMac specific metal GPU selected or detected'
     cp -f opencore/CONFIG/config_OTHER_BigSur.plist /Volumes/EFI/EFI/OC/config.plist
 fi
 
