@@ -138,6 +138,10 @@ do
         INSTALL_APPLEGVA="YES"
         DISABLE_LIBRARY_VALIDATION="YES"
         ;;
+    --R3000)
+        echo "Experimental: Adding High Sierra R3000 Extensions to avoid kmutil linker error (MacBookPro6,x MacBookPro8,x)"
+        INSTALL_Radeon3000X="YES"
+        ;;
     --model=iMacOC)
         echo "Experimental: selected model iMacOC - assume using OpenCore with iMac11,x or iMac12,x"
         MODEL="iMacOC"
@@ -266,9 +270,14 @@ then
         echo "Detected a 2006-2009 iMac. Using --2010 patch mode." $MODEL
         PATCHMODE=--2010
         ;;
-    Macmini5,?|MacBookAir4,?|MacBookPro8,?)
+    Macmini5,?|MacBookAir4,?)
         echo "Detected a 2011 Mac. Using --2011 patch mode." $MODEL
         PATCHMODE=--2011
+        ;;
+    MacBookPro8,?)
+        echo "Detected a 2011 MacBookPro. Using --2011 patch mode." $MODEL
+        PATCHMODE=--2011
+        INSTALL_Radeon3000X="YES"
         ;;
     iMac11,?)
         echo "Detected a Late 2009 or Mid 2010 11,x iMac. Using --2011 patch mode + metal GPU add ons." $MODEL
@@ -791,9 +800,9 @@ then
         DID=`/usr/sbin/chroot "$VOLUME" /usr/sbin/system_profiler SPDisplaysDataType | fgrep "Device ID" | awk '{print $3}'`
     
         case $DID in
-            # OpenCore: K610M, K1100M, K2100M
-            0x12b9 | 0x0ff6 | 0x11fc)
-            echo "NVIDIA K610M, K1100M, K2100M found, assume use of OC, device ID: " $DID
+            # OpenCore: K610M, K1100M, K2100M, GTX765M, GTX770M
+            0x12b9 | 0x0ff6 | 0x11fc | 0x11e0 | 0x11e1 )
+            echo "NVIDIA K610M, K1100M, K2100M, GTX765M, GTX770M found, assume use of OC, device ID: " $DID
             INSTALL_BACKLIGHT="YES"
             INSTALL_AGC="YES"            ;;
             # OpenCore; AMD Baffin cards
@@ -804,7 +813,7 @@ then
             ;;
             # OpenCore: NVIDIA ++ cards
             0x1198 | 0x1199 | 0x119a | 0x119f | 0x119e |0x119d |0x11e0 | 0x11e1 | 0x11b8 | 0x11b7 | 0x11b6 | 0x11bc | 0x11bd | 0x11be |0x0ffb | 0x0ffc)
-            echo "NVIDIA Kepler Kx100M, Kx000M, GTX8xx, GTX7xx Card found, assume now use of OC unless --nikey22 has been used, device ID: " $DID
+            echo "NVIDIA Kepler Kx100M, Kx000M, GTX8xx, GTX78x Card found, assume now use of OC unless --nikey22 has been used, device ID: " $DID
             INSTALL_BACKLIGHT="YES"
             INSTALL_AGC="YES"
             ;;
